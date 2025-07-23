@@ -22,7 +22,7 @@ public class CommunityCenterServiceImpl implements CommunityCenterService {
     public void addCenter(CommunityCenterRequest dto){
 
         if (dto.getName() == null || dto.getAddress() == null || dto.getMaxCapacity() <= 0) {
-            throw new IllegalArgumentException("Invalid community center request");
+            throw new IllegalArgumentException("Centro comunitário inválido: nome, endereço e capacidade máxima são obrigatórios.");
         }
 
         CommunityCenter communityCenter = new CommunityCenter();
@@ -38,14 +38,39 @@ public class CommunityCenterServiceImpl implements CommunityCenterService {
     @Override
     public void updateOccupancy(String centerId, int newOccupancy) {
         CommunityCenter communityCenter = communityCenterRepository.findById(UUID.fromString(centerId))
-                .orElseThrow(() -> new IllegalArgumentException("Community center not found"));
+                .orElseThrow(() -> new IllegalArgumentException("Centro comunitário não encontrado"));
 
         if (newOccupancy < 0 || newOccupancy > communityCenter.getMaxCapacity()) {
-            throw new IllegalArgumentException("Invalid occupancy value");
+            throw new IllegalArgumentException("Ocupação inválida: deve ser entre 0 e a capacidade máxima do centro comunitário.");
+        }
+
+        if(newOccupancy == communityCenter.getMaxCapacity()){
+            // Simula a notificação se o centro comunitário atingiu sua capacidade máxima
+            System.out.println("Alerta: O centro comunitário " + communityCenter.getName() + " atingiu sua capacidade máxima.");
         }
 
         communityCenter.setCurrentOccupancy(newOccupancy);
         communityCenterRepository.save(communityCenter);
+    }
+
+    @Override
+    public void performMaxCapacityNotification() {
+        List<CommunityCenter> centers = communityCenterRepository.findByCurrentOccupancyGreaterThan(0);
+
+        // Verifica e notifica se algum centro comunitário atingiu sua capacidade máxima
+        centers.forEach(center -> {
+            if (center.getCurrentOccupancy() >= center.getMaxCapacity()) {
+                // Simula a notificação se o centro comunitário atingiu sua capacidade máxima
+                System.out.println("Alerta: O centro comunitário " + center.getName() + " atingiu sua capacidade máxima.");
+            }
+        });
+    }
+
+    @Override
+    public boolean isCenterFull(UUID centerId) {
+        CommunityCenter communityCenter = communityCenterRepository.findById(centerId)
+                .orElseThrow(() -> new IllegalArgumentException("Centro comunitário não encontrado"));
+        return communityCenter.getCurrentOccupancy() == communityCenter.getMaxCapacity();
     }
 
     @Override
@@ -56,13 +81,13 @@ public class CommunityCenterServiceImpl implements CommunityCenterService {
     @Override
     public CommunityCenter getCenterById(String centerId) {
         return communityCenterRepository.findById(UUID.fromString(centerId))
-                .orElseThrow(() -> new IllegalArgumentException("Community center not found"));
+                .orElseThrow(() -> new IllegalArgumentException("Centro comunitário não encontrado"));
     }
 
     @Override
     public void deleteCenter(String centerId) {
         CommunityCenter communityCenter = communityCenterRepository.findById(UUID.fromString(centerId))
-                .orElseThrow(() -> new IllegalArgumentException("Community center not found"));
+                .orElseThrow(() -> new IllegalArgumentException("Centro comunitário não encontrado"));
         communityCenterRepository.delete(communityCenter);
     }
 
@@ -70,7 +95,7 @@ public class CommunityCenterServiceImpl implements CommunityCenterService {
     public CommunityCenter listCenterWithHighestOccupancy() {
         return communityCenterRepository.findAll().stream()
                 .max((c1, c2) -> Integer.compare(c1.getCurrentOccupancy(), c2.getCurrentOccupancy()))
-                .orElseThrow(() -> new IllegalArgumentException("No community centers found"));
+                .orElseThrow(() -> new IllegalArgumentException("Nenhum centro comunitário encontrado"));
     }
 
     @Override

@@ -26,4 +26,8 @@ public interface CommunityCenterService {
     List<CommunityCenter> getCentersWithOccupancyGreaterThanNinetyPercent();
 
     Map<ResourceTypeEnum, Double> getAverageResourcesPerType();
+
+    void performMaxCapacityNotification();
+
+    boolean isCenterFull(UUID centerId);
 }

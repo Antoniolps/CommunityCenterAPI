@@ -6,41 +6,53 @@ import br.com.antoniolps.CommunityCenterAPI.model.dtos.UpdateOccupancyRequest;
 import br.com.antoniolps.CommunityCenterAPI.model.enums.ResourceTypeEnum;
 import br.com.antoniolps.CommunityCenterAPI.service.CommunityCenterService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 
-@RestController(value = "community-center")
+@RestController
+@RequestMapping("/community-centers")
 @RequiredArgsConstructor
 public class CommunityCenterController {
 
     private final CommunityCenterService communityCenterService;
 
     @PostMapping
-    public void addCenter(CommunityCenterRequest dto) {
+    public ResponseEntity<Void> addCenter(CommunityCenterRequest dto) {
         communityCenterService.addCenter(dto);
+        return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
     @PutMapping("/{id}/occupancy")
-    public void updateOccupancy(@PathVariable("id") String id, UpdateOccupancyRequest dto) {
+    public ResponseEntity<Void> updateOccupancy(@PathVariable("id") String id, UpdateOccupancyRequest dto) {
         communityCenterService.updateOccupancy(id, dto.getCurrentOccupancy());
+        return ResponseEntity.status(HttpStatus.OK).build();
     }
 
     @GetMapping("/highest-occupancy")
-    public CommunityCenter listCenterWithHighestOccupancy() {
-        return communityCenterService.listCenterWithHighestOccupancy();
+    public ResponseEntity<CommunityCenter> listCenterWithHighestOccupancy() {
+        return ResponseEntity.ok(communityCenterService.listCenterWithHighestOccupancy());
     }
 
     @GetMapping("/occupancy-greater-than-ninety")
-    public List<CommunityCenter> getCentersWithOccupancyGreaterThanNinetyPercent() {
-        return communityCenterService.getCentersWithOccupancyGreaterThanNinetyPercent();
+    public ResponseEntity<List<CommunityCenter>> getCentersWithOccupancyGreaterThanNinetyPercent() {
+        return ResponseEntity.ok(communityCenterService.getCentersWithOccupancyGreaterThanNinetyPercent());
     }
 
     @GetMapping("/average-resources")
-    public Map<ResourceTypeEnum, Double> getAverageResourcesPerType() {
-        return communityCenterService.getAverageResourcesPerType();
+    public ResponseEntity<Map<ResourceTypeEnum, Double>> getAverageResourcesPerType() {
+        return ResponseEntity.ok(communityCenterService.getAverageResourcesPerType());
+    }
+
+    @GetMapping
+    public ResponseEntity<Boolean> isCenterFull(@RequestParam("id") String centerId) {
+        boolean isFull = communityCenterService.isCenterFull(UUID.fromString(centerId));
+        return ResponseEntity.ok(isFull);
     }
 
 }
