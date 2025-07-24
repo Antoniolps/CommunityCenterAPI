@@ -31,11 +31,13 @@ public class ExchangeServiceImpl implements ExchangeService {
                 .orElseThrow(() -> new IllegalArgumentException("Centro de destino não encontrado."));
 
         validateExchangePoints(source, target, dto.getResourcesGiven(), dto.getResourcesRequested());
-        updateResources(source, dto.getResourcesGiven(), false);
-        updateResources(target, dto.getResourcesRequested(), true);
+        
 
-        updateResources(target, dto.getResourcesGiven(), false);
+        updateResources(source, dto.getResourcesGiven(), false);
         updateResources(source, dto.getResourcesRequested(), true);
+
+        updateResources(target, dto.getResourcesRequested(), false);
+        updateResources(target, dto.getResourcesGiven(), true);
 
         communityCenterRepository.save(source);
         communityCenterRepository.save(target);
@@ -113,4 +115,3 @@ public class ExchangeServiceImpl implements ExchangeService {
         exchangeHistoryRepository.save(history);
     }
 }
-
