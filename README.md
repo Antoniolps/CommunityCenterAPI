@@ -48,15 +48,15 @@ Uma API REST para gerenciamento de centros comunitários, desenvolvida com Sprin
    - Documentação Swagger: `http://localhost:8080/swagger-ui.html`
 
 ## 📁 Estrutura do Projeto
-#### CommunityCenterAPI/
-#### ├── src/
-#### │ ├── main/
-#### │ │ ├── java/
-#### │ │ │ └── br/com/antoniolps/CommunityCenterAPI/
-#### │ │ └── resources/
-#### │ └── test/
-#### ├── pom.xml
-#### └── README.md
+CommunityCenterAPI/
+├── src/
+│ ├── main/
+│ │ ├── java/
+│ │ │ └── br/com/antoniolps/CommunityCenterAPI/
+│ │ └── resources/
+│ └── test/
+├── pom.xml
+└── README.md
 
 ## 📖 Documentação da API
 
